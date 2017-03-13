@@ -21,13 +21,13 @@ if api.login(un, pw, Mobileclient.FROM_MAC_ADDRESS):
 
     i = 0
     while len(library) > 0:
-        sample = library[:1000]
+        sample = library[:PLAYLIST_MAX_SONGS]
         sweet_track_ids = [track['id'] for track in sample 
                                if track['genre'] in genres]
         playlist_id = api.create_playlist(playlist+str(i))
         api.add_songs_to_playlist(playlist_id, sweet_track_ids)
         print 'uploaded ' + len(sample) + ' songs to ' + playlist + str(i);
-        del library[:1000]
+        del library[:PLAYLIST_MAX_SONGS]
         i = i + 1
 
 
