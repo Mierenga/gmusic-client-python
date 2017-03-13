@@ -1,0 +1,44 @@
+#!/usr/local/bin/python
+import os
+import sys
+from gmusicapi import Musicmanager
+from secrets import lib_root
+
+if len(sys.argv) != 3:
+    print """    Usage:  ./download <key> <value>
+    e.g.,   ./download artist "pink floyd"
+    or      ./download album "dark side of the moon"
+    """ 
+    sys.exit(0)
+
+key = (sys.argv[1]).lower()
+value = (sys.argv[2]).lower()
+
+mm = Musicmanager()
+
+if mm.login():
+    print 'login success'
+    library = mm.get_uploaded_songs()
+
+    # get all the tracks for the given value at the given key
+    for track in library:
+        if (track[key]).lower() == value:
+            filename, audio = mm.download_song(track['id'])
+
+            artist_dir = lib_root + track['artist']
+            if not os.path.exists(artist_dir):
+                os.makedirs(artist_dir)
+
+            album_dir = artist_dir + '/' + track['album']
+            if not os.path.exists(album_dir):
+                os.makedirs(album_dir)
+
+            file_path = album_dir + '/' + filename
+
+            with open(file_path, 'wb') as f:
+                print track['artist'] + ': ' + track['album'] + ' -- ' + track['title'] + '[' + filename + ']'
+
+                f.write(audio)
+
+else:
+    print 'login fail'
